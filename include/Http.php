@@ -33,13 +33,10 @@ class Http {
 		curl_setopt( $this->ch, CURLOPT_USERAGENT, $userAgent );
 		curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $this->ch, CURLOPT_FOLLOWLOCATION, true );
-		curl_setopt( $this->ch,CURLOPT_COOKIEJAR, 'cookies.' . $this->uid . '.dat' );
-		curl_setopt( $this->ch,CURLOPT_COOKIEFILE, 'cookies.' . $this->uid . '.dat' );
 	}
 
 	public function __destruct() {
 		curl_close( $this->ch );
-		@unlink( 'cookies.' . $this->uid . '.dat' );
 	}
 
 	/**
