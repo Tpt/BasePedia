@@ -26,7 +26,6 @@
 class BasePedia {
 	protected $http;
 	protected $entities = array();
-	const HOST = 'wikidata-test-repo.wikimedia.de'; //'wikidata.org';
 	const LICENCE_URI = 'http://creativecommons.org/publicdomain/zero/1.0/';
 
 	public function __construct() {
@@ -65,7 +64,7 @@ class BasePedia {
 	 * @return EasyRdf_Graph
 	 */
 	protected function createBaseGraph() {
-		EasyRdf_Namespace::set( 'wd', 'http://' . self::HOST . '/id/' );
+		EasyRdf_Namespace::set( 'wd', 'http://' . self::getRepoHost() . '/id/' );
 		EasyRdf_Namespace::set( 'wb', 'http://wikidata.org/schema/' );
 		$graph = new EasyRdf_Graph();
 
@@ -136,7 +135,7 @@ class BasePedia {
 		foreach( $params as $name => $value ) {
 			$data .= '&' . $name . '=' . rawurlencode( $value );
 		}
-		$url = 'http://' . self::HOST . '/w/api.php?' . $data;
+		$url = 'http://' . self::getRepoHost() . '/w/api.php?' . $data;
 		$response = $this->http->get( $url );
 		return unserialize( $response );
 	}
@@ -159,7 +158,7 @@ class BasePedia {
 	 * @param string $id The id of the entity like "q23"
 	 */
 	public static function getDocumentUri( $id ) {
-		return 'http://' . self::HOST . '/wiki/' . strtoupper( $id );
+		return 'http://' . self::getRepoHost() . '/wiki/' . strtoupper( $id );
 	}
 
 	/**
@@ -167,6 +166,18 @@ class BasePedia {
 	 * @param string $id The id of the entity like "q23"
 	 */
 	public static function getEntityUri( $id ) {
-		return 'http://' . self::HOST . '/id/' . strtoupper( $id );
+		return 'http://' . self::getRepoHost() . '/id/' . strtoupper( $id );
+	}
+
+	/**
+	 * Returns host of the used repository
+	 * @return string like "wikidata.org"
+	 */
+	public static function getRepoHost() {
+		global $wgBasePediaRepo;
+		if( !isset( $wgBasePediaRepo ) ) {
+			$wgBasePediaRepo = 'wikidata.org';
+		}
+		return $wgBasePediaRepo;
 	}
 }
