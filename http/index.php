@@ -13,7 +13,7 @@ if( $ids === array() ) {
 		header( 'HTTP/1.1 404 Not Found' );
 		echo 'No entities found.';
 	} else {
-		$basePedia->addEntitiesFromSitelinks( $sites, $ids, $languages );
+		$basePedia->addEntitiesFromSitelinks( $sites, $titles, $languages );
 	}
 } else {
 	if( $sites === array() || $titles === array() ) {
