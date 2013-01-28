@@ -37,7 +37,7 @@ class ItemResource extends EntityResource {
 			if( preg_match( '/^(.*)wiki$/', $link['site'], $m ) ) {
 				$this->resource->add( 'foaf:isPrimaryTopicOf', $this->graph->resource( 'http://' . str_replace( '_', '-', $m[1] ) . '.wikipedia.org/wiki/' . $title ) );
 				if( $m[1] === 'en' ) {
-					$this->resource->add( 'owl:sameAs', $this->graph->resource( 'http://dbpedia.org/resource/#' . $title ) );
+					$this->resource->add( 'owl:sameAs', $this->graph->resource( 'http://dbpedia.org/resource/' . $title ) );
 				} else if( in_array( $m[1], array( 'fr', 'it', 'ja', 'ko', 'cs', 'el', 'pl', 'ru', 'es', 'de', 'pt' ) ) ) {
 					$this->resource->add( 'owl:sameAs', $this->graph->resource( 'http://' . $m[1] . '.dbpedia.org/resource/' . $title ) );
 				}
