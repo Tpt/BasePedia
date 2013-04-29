@@ -21,16 +21,25 @@ if( isset( $_GET['format'] ) && $_GET['format'] !== '' ) {
 
 $basePedia = BasePedia::singleton();
 
-if( $ids === array() ) {
-	if( $sites === array() || $titles === array() || count( $titles ) > 50 ) {
-		header( 'HTTP/1.1 404 Not Found' );
-		echo 'No entities found.';
+if( count( $titles ) > 50 || count( $ids ) > 50 ) {
+	header( 'HTTP/1.1 409 Conflict' );
+	echo 'You have asked for too many pages.';
+	exit();
+} elseif( $ids === array() ) {
+	if( $sites === array() || $titles === array() ) {
+		if( in_array( $formatId, array( 'html', 'text/html' ) ) ) {
+			header( 'Content-type: text/html' );
+			echo file_get_contents( 'help.html' );
+		} else {
+			header( 'HTTP/1.1 404 Not Found' );
+			echo 'No entities found.';
+		}
 		exit();
 	} else {
 		$basePedia->addEntitiesFromSitelinks( $sites, $titles, $languages );
 	}
 } else {
-	if( $sites === array() && $titles === array() && count( $ids ) <= 50 ) {
+	if( $sites === array() && $titles === array() ) {
 		$basePedia->addEntitiesFromIds( $ids, $languages );
 	} else {
 		header( 'HTTP/1.1 409 Conflict' );
@@ -38,16 +47,24 @@ if( $ids === array() ) {
 		exit();
 	}
 }
+
+if( $basePedia->isEmpty() ) {
+	header( 'HTTP/1.1 404 Not Found' );
+	echo 'No entities found.';
+	exit();
+}
+
 $graph = $basePedia->getRdfGraph( $languages );
 
 if( in_array( $formatId, array( 'html', 'text/html' ) ) ) {
+	header( 'Content-type: text/html' );
 	echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BasePedia</title></head><body>';
 	echo $graph->dump( true );
 	echo '</body></html>';
 } else {
 	try {
 		$format = EasyRdf_Format::getFormat( $formatId );
-		header('Content-type: ' . $format->getDefaultMimeType() );
+		header( 'Content-type: ' . $format->getDefaultMimeType() );
 		echo $graph->serialise( $format );
 	} catch( Exception $e ) {
 		header( 'HTTP/1.1 409 Conflict' );

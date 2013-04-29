@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>BasePedia help</title>
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet" />
+		<style type="text/css">
+			body {
+				padding-top: 20px;
+				padding-bottom: 40px;
+			}
+
+			.container-narrow {
+				margin: 0 auto;
+				max-width: 700px;
+			}
+		</style>
+	</head>
+	<body>
+		<article class="container-narrow">
+			<div class="hero-unit">
+				<h1>BasePedia</h1>
+				<p>BasePedia is an RDF output of <a href="//www.wikidata.org">Wikidata</a> content, currently in development. The source code is <a href="https://github.com/Tpt/BasePedia">on GitHub</a>.
+			</div>
+			<section>
+				<h2>Presentation</h2>
+				<p>BasePedia is a draft of RDF output of the Wikidata API using widely used vocabularies.</p>
+				<p>BasePedia is currently in active development and the URI system is not stable. It supports phase 1 data and a beginning of a very simplified output of Phase 2 statements.</p>
+				<p>The ontology used for mapping is availlable here <a href="http://basepedia.wmflabs.org/ontology">http://basepedia.wmflabs.org/ontology</a></p>
+			</section>
+			<section>
+				<h2>URIs</h2>
+				<p>BasePedia provides URIs for items like <a href="http://basepedia.wmflabs.org/id/q1">http://basepedia.wmflabs.org/id/q1</a> and supports content negotiation. In order to force a format you can append to URIs a file extension like in <a href="http://basepedia.wmflabs.org/id/q1.rdf">http://basepedia.wmflabs.org/id/q1.rdf</a></p>
+			</section>
+			<section>
+				<h2>API-like entry point</h2>
+				<p>The entry point, index.php, currently support most of parameters of the wbgetentities action of the MediaWiki api.</p>
+				<p>These parameters are supported:</p>
+				<ul>
+					<li>ids: The IDs of the entities to get the data from Separate values with '|' Maximum number of values: 50</li>
+					<li>sites: Identifier for the site on which the corresponding page resides Use together with 'title', but only give one site for several titles or several sites for one title. Values (separate with '|') like "enwiki' or "zh_classicalwiki" Maximum number of values: 50</li>
+					<li>titles The title of the corresponding page Use together with 'sites', but only give one site for several titles or several sites for one title. Separate values with '|' Maximum number of values: 50</li>
+					<li>languages: By default the internationalized values are returned in all available languages. This parameter allows filtering these down to one or more languages by providing one or more language codes. Values (separate with '|') like "en" or kk-cyrl"</li>
+					<li>format: Output format to use By default html Values: html, rdfxml, json, turtle, n3, png, svg</li>
+				</ul>
+				<h5>Examples:</h5>
+				<ul>
+					<li>Get item with ID q42 with language attributes in all available languages in RDF/XML: <a href="index.php?format=rdfxml&ids=q42">index.php?format=rdfxml&ids=q42</a></li>
+					<li>Get item with ID q42 with language attributes in English language and in HTML: <a href="index.php?format=html&ids=q42&languages=en">index.php?format=html&ids=q42&languages=en</a></li>
+					<li>Get the item for page "Berlin" on the site "enwiki", with language attributes in English language and in Turtle: <a href="index.php?format=turtle&sites=enwiki&titles=Berlin&languages=en">index.php?format=turtle&sites=enwiki&titles=Berlin&languages=en</a></li>
+				</ul>
+			</section>
+		</article>
+	</body>
+</html>

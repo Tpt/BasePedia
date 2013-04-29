@@ -189,6 +189,14 @@ class BasePedia {
 	}
 
 	/**
+	 * Check if the output will be empty or not
+	 * @return boolean
+	 */
+	public function isEmpty() {
+		return empty( $this->entities );
+	}
+
+	/**
 	 * @return BasePedia
 	 */
 	public static function singleton() {

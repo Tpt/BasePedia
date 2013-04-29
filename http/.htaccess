@@ -1,4 +1,5 @@
 Options +FollowSymlinks
 RewriteEngine On
+RewriteRule ^$ help.html [L]
 RewriteRule ^ontology$ ontology.rdf [L]
 RewriteRule ^id/([pqPQ][0-9]*)(\.(.*))?$ index.php?ids=$1&format=$3 [L]

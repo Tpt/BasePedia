@@ -21,11 +21,11 @@
 		<rdfs:label xml:lang="en">property</rdfs:label>
 	</rdfs:Class>
 
-	<owl:Nothing rdf:about="http://basepedia.wmflabs.org/ontology.rdf#nothing">
+	<owl:Nothing rdf:about="http://basepedia.wmflabs.org/ontology#nothing">
 		<rdfs:label xml:lang="en">nothing</rdfs:label>
 	</owl:Nothing>
 
-	<owl:Thing rdf:about="http://basepedia.wmflabs.org/ontology.rdf#something">
+	<owl:Thing rdf:about="http://basepedia.wmflabs.org/ontology#something">
 		<rdfs:label xml:lang="en">something</rdfs:label>
 	</owl:Thing>
 </rdf:RDF>
