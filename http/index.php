@@ -5,9 +5,22 @@ $ids = isset( $_GET['ids'] ) ? explode( '|', rawurldecode( $_GET['ids'] ) ) : ar
 $sites = isset( $_GET['sites'] ) ? explode( '|', rawurldecode( $_GET['sites'] ) ) : array();
 $titles = isset( $_GET['titles'] ) ? explode( '|', rawurldecode( $_GET['titles'] ) ) : array();
 $languages = isset( $_GET['languages'] ) ? explode( '|', rawurldecode( $_GET['languages'] ) ) : array();
-$formatId = isset( $_GET['format'] ) ? str_replace( ' ', '+', urldecode( $_GET['format'] ) ) : 'html';
-$wgBasePediaRepo = isset( $_GET['repo'] ) ? $_GET['repo'] : 'wikidata.org';
-if( !in_array( $wgBasePediaRepo, array( 'wikidata.org', 'wikidata-test-repo.wikimedia.de' ) ) ) {
+$wgBasePediaRepo = isset( $_GET['repo'] ) ? $_GET['repo'] : 'www.wikidata.org';
+
+$formatId = 'text/html';
+if( isset( $_GET['format'] ) && $_GET['format'] !== '' ) {
+	$formatId = str_replace( ' ', '+', urldecode( $_GET['format'] ) );
+} elseif( function_exists( 'http_negotiate_content_type' ) ) {
+	$acceptedFormats = array( 'text/html' => 'text/html' );
+	foreach( EasyRdf_Format::getFormats() as $format ) {
+		foreach( $format->getMimeTypes() as $format => $priority ) {
+			$acceptedFormats[$format] = $format;
+		}
+	}
+	$formatId = http_negotiate_content_type( $acceptedFormats, $_SERVER['HTTP_ACCEPT'] );
+}
+
+if( !in_array( $wgBasePediaRepo, array( 'wikidata.org', 'www.wikidata.org', 'wikidata-test-repo.wikimedia.de' ) ) ) {
 	header( 'HTTP/1.1 404 Not Found' );
 	echo 'The parameter repo is not valid.';
 	exit();
@@ -34,7 +47,7 @@ if( $ids === array() ) {
 }
 $graph = $basePedia->getRdfGraph( $languages );
 
-if( $formatId === 'html' ) {
+if( in_array( $formatId, array( 'html', 'text/html' ) ) ) {
 	echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BasePedia</title></head><body>';
 	echo $graph->dump( true );
 	echo '</body></html>';
@@ -45,6 +58,6 @@ if( $formatId === 'html' ) {
 		echo $graph->serialise( $format );
 	} catch( Exception $e ) {
 		header( 'HTTP/1.1 409 Conflict' );
-		echo 'Unknown serialisation format.';
+		echo 'Unknown serialisation format ' . $formatId;
 	}
 }

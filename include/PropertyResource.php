@@ -37,6 +37,7 @@ class PropertyResource extends EntityResource {
 				$this->resource->add( 'rdfs:range', $this->graph->resource( 'wb:Item' ) );
 				break;
 			case 'commonsMedia':
+			case 'string':
 				$this->resource->add( 'rdfs:range', $this->graph->resource( 'rdfs:Literal' ) );
 				break;
 		}

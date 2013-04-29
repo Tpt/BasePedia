@@ -65,17 +65,8 @@ class BasePedia {
 	 */
 	protected function createBaseGraph() {
 		EasyRdf_Namespace::set( 'wd', 'http://' . self::getRepoHost() . '/id/' );
-		EasyRdf_Namespace::set( 'wb', 'http://wikidata.org/schema/' );
-		$graph = new EasyRdf_Graph();
-
-		$item = $graph->resource( 'wb:Item' );
-		$item->setType( 'rdfs:Class' );
-		$item->add( 'rdfs:subClassOf', $graph->resource( 'rdfs:Resource' ) );
-
-		$property = $graph->resource( 'wb:Property' );
-		$property->setType( 'rdfs:Class' );
-		$property->add( 'rdfs:subClassOf', $graph->resource( 'rdf:Property' ) );
-		return $graph;
+		EasyRdf_Namespace::set( 'wb', 'http://basepedia.wmflabs.org/ontology#' );
+		return new EasyRdf_Graph();
 	}
 
 	protected function addEntityToGraph( EasyRdf_Graph $graph, array $entity, $withDocument = true ) {
@@ -131,11 +122,7 @@ class BasePedia {
 	 * @throws Exception
 	 */
 	protected function get( array $params ) {
-		$data = 'format=php';
-		foreach( $params as $name => $value ) {
-			$data .= '&' . $name . '=' . rawurlencode( $value );
-		}
-		$url = 'http://' . self::getRepoHost() . '/w/api.php?' . $data;
+		$url = 'http://' . self::getRepoHost() . '/w/api.php?' . http_build_query( $params + array( 'format' => 'php' ) );
 		$response = $this->http->get( $url );
 		return unserialize( $response );
 	}
@@ -166,7 +153,7 @@ class BasePedia {
 	 * @param string $id The id of the entity like "q23"
 	 */
 	public static function getEntityUri( $id ) {
-		return 'http://' . self::getRepoHost() . '/id/' . strtoupper( $id );
+		return 'http://' . self::getRepoHost() . '/id/' . strtolower( $id );
 	}
 
 	/**

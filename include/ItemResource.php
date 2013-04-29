@@ -58,10 +58,20 @@ class ItemResource extends EntityResource {
 	 * @param array $snak the snak as outputed by the Wikidata API
 	 */
 	protected function addSnak( array $snak ) {
+		$value = null;
 		switch( $snak['snaktype'] ) {
 			case 'value':
-				$this->resource->add( $this->graph->resource( BasePedia::getEntityUri( $snak['property'] ) ), $this->getValueFromDataValue( $snak['datavalue'] ) );
+				$value = $this->getValueFromDataValue( $snak['datavalue'] );
 				break;
+			case 'somevalue':
+				$value = $this->graph->resource( 'wb:something' );
+				break;
+			case 'novalue':
+				$value = $this->graph->resource( 'wb:nothing' );
+				break;
+		}
+		if( $value !== null ) {
+			$this->resource->add( $this->graph->resource( BasePedia::getEntityUri( $snak['property'] ) ), $value );
 		}
 	}
 

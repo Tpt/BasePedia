@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:wb="http://basepedia.wmflabs.org/ontology#"
+	>
+
+	<owl:Ontology rdf:about="http://basepedia.wmflabs.org/ontology#">
+		<rdfs:label xml:lang="en">BasePedia ontology</rdfs:label>
+	</owl:Ontology>
+
+	<rdfs:Class rdf:about="http://basepedia.wmflabs.org/ontology#Item">
+		<rdfs:subClassOf rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+		<rdfs:label xml:lang="en">item</rdfs:label>
+	</rdfs:Class>
+
+	<rdfs:Class rdf:about="http://basepedia.wmflabs.org/ontology#Property">
+		<rdfs:subClassOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+		<rdfs:label xml:lang="en">property</rdfs:label>
+	</rdfs:Class>
+
+	<owl:Nothing rdf:about="http://basepedia.wmflabs.org/ontology.rdf#nothing">
+		<rdfs:label xml:lang="en">nothing</rdfs:label>
+	</owl:Nothing>
+
+	<owl:Thing rdf:about="http://basepedia.wmflabs.org/ontology.rdf#something">
+		<rdfs:label xml:lang="en">something</rdfs:label>
+	</owl:Thing>
+</rdf:RDF>

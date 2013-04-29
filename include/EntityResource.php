@@ -63,16 +63,21 @@ abstract class EntityResource {
 		}
 
 		$this->resource = $this->graph->resource( BasePedia::getEntityUri( $this->data['id'] ), 'rdfs:Resource' );
-		$this->resource->add( 'foaf:page', $this->graph->resource( BasePedia::getDocumentUri( $this->data['id'] ) ) );
+		$this->resource->add( 'foaf:isPrimaryTopicOf', $this->graph->resource( BasePedia::getDocumentUri( $this->data['id'] ) ) );
 		if( $withDocument ) {
 			$page->add( 'foaf:primaryTopic', $this->resource );
 		}
 
 		foreach( $this->data['labels'] as $label ) {
-			$this->resource->add( 'rdfs:label', new EasyRdf_Literal( $label['value'], $label['language'] ) );
+			$this->resource->add( 'skos:prefLabel', new EasyRdf_Literal( $label['value'], $label['language'] ) );
 		}
 		foreach( $this->data['descriptions'] as $description ) {
-			$this->resource->add( 'rdfs:comment', new EasyRdf_Literal( $description['value'], $description['language'] ) );
+			$this->resource->add( 'skos:note', new EasyRdf_Literal( $description['value'], $description['language'] ) );
+		}
+		foreach( $this->data['aliases'] as $aliases ) {
+			foreach( $aliases as $alias ) {
+				$this->resource->add( 'skos:altLabel', new EasyRdf_Literal( $alias['value'], $alias['language'] ) );
+			}
 		}
 	}
 
