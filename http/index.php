@@ -19,7 +19,7 @@ if( isset( $_GET['format'] ) && $_GET['format'] !== '' ) {
 	$formatId = http_negotiate_content_type( $acceptedFormats, $_SERVER['HTTP_ACCEPT'] );
 }
 
-$basePedia = new BasePedia();
+$basePedia = BasePedia::singleton();
 
 if( $ids === array() ) {
 	if( $sites === array() || $titles === array() || count( $titles ) > 50 ) {

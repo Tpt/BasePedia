@@ -29,7 +29,8 @@ class ItemResource extends EntityResource {
 	 * @see EntityResource::updateGraph
 	 */
 	public function updateGraph( $withDocument = true ) {
-		parent::updateGraph( true );
+		parent::updateGraph( $withDocument );
+
 		$this->resource->setType( 'wb:Item' );
 		$this->resource->add( 'owl:sameAs', $this->graph->resource( BasePedia::getEntityUriInRepo( $this->data['id'] ) ) );
 
@@ -62,7 +63,7 @@ class ItemResource extends EntityResource {
 		$value = null;
 		switch( $snak['snaktype'] ) {
 			case 'value':
-				$value = $this->getValueFromDataValue( $snak['datavalue'] );
+				$value = $this->getValueFromDataValue( $snak['property'], $snak['datavalue'] );
 				break;
 			case 'somevalue':
 				$value = $this->graph->resource( 'wb:something' );
@@ -78,21 +79,30 @@ class ItemResource extends EntityResource {
 
 	/**
 	 * Returns the RDF value of a DataValue
+	 * @param string $propertyId the propertyId
 	 * @param array $value the datavalue as outputed by the Wikidata API
 	 * @return EasyRdf_Literal|EasyRdf_Resource|null
 	 */
-	protected function getValueFromDataValue( array $value ) {
-		switch( $value['type'] ) {
+	protected function getValueFromDataValue( $propertyId, array $value ) {
+		$type = BasePedia::singleton()->getPropertyDatatype( $propertyId );
+		if( $type === null ) {
+			$type = $value['type'];
+		}
+
+		switch( $type ) {
+			case 'wikibase-item':
 			case 'wikibase-entityid':
 				switch( $value['value']['entity-type'] ) {
 					case 'item':
-						return $this->graph->resource( BasePedia::getEntityUri( 'Q' . $value['value']['numeric-id'] ) );
+						return $this->graph->resource( BasePedia::getEntityUri( 'q' . $value['value']['numeric-id'] ) );
 					case 'property':
-						return $this->graph->resource( BasePedia::getEntityUri( 'P' . $value['value']['numeric-id'] ) );
+						return $this->graph->resource( BasePedia::getEntityUri( 'p' . $value['value']['numeric-id'] ) );
 				}
-				break;
+				return null;
 			case 'string':
 				return new EasyRdf_Literal( $value['value'] );
+			case 'commonsMedia':
+				return $this->graph->resource( 'http://commons.wikimedia.org/wiki/File:' . $value['value'] );
 		}
 		return null;
 	}

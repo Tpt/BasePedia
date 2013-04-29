@@ -30,7 +30,7 @@ class BasePedia {
 	const BASE_URI = 'http://basepedia.wmflabs.org';
 	const BASE_REPO_URI = 'http://www.wikidata.org';
 
-	public function __construct() {
+	protected function __construct() {
 		$this->http = new Http( 'BasePedia/0.1 by User:Tpt' );
 	}
 
@@ -40,8 +40,11 @@ class BasePedia {
 	public function getRdfGraph( array $languages ) {
 		$graph = $this->createBaseGraph();
 		$propertiesUsed = array();
+		$mainEntitiesId = array();
+
+		//GetUsedProperties
 		foreach( $this->entities as $id => $entity ) {
-			//Get used properties
+			$mainEntitiesId[] = $id;
 			if( isset( $entity['claims'] ) ) {
 				foreach( $entity['claims'] as $prop => $claim ) {
 					if( !isset( $this->entities[$prop] ) ) {
@@ -49,12 +52,18 @@ class BasePedia {
 					}
 				}
 			}
+		}
 
-			$this->addEntityToGraph( $graph, $entity, true );
+		//Load properties
+		$this->addEntitiesFromIds( $propertiesUsed, $languages );
+
+		//Add "main" entities
+		foreach( $mainEntitiesId as $id ) {
+			$this->addEntityToGraph( $graph, $this->entities[$id], true );
 			unset( $this->entities[$id] );
 		}
 
-		$this->addEntitiesFromIds( $propertiesUsed, $languages );
+		//Add remaining properties
 		foreach( $this->entities as $id => $entity ) {
 			$this->addEntityToGraph( $graph, $entity, false );
 		}
@@ -71,7 +80,7 @@ class BasePedia {
 		return new EasyRdf_Graph();
 	}
 
-	protected function addEntityToGraph( EasyRdf_Graph $graph, array $entity, $withDocument = true ) {
+	protected function addEntityToGraph( EasyRdf_Graph $graph, array $entity, $withDocument ) {
 		switch( $entity['type'] ) {
 			case 'item':
 				$item = new ItemResource( $entity, $graph );
@@ -164,5 +173,29 @@ class BasePedia {
 	 */
 	public static function getEntityUriInRepo( $id ) {
 		return self::BASE_REPO_URI . '/id/' . strtolower( $id );
+	}
+
+	/**
+	 * Return the datatype for an already loade property
+	 * @param string $propertyId propertyId
+	 * @return string|null
+	 */
+	public function getPropertyDatatype( $propertyId ) {
+		$propertyId = strtolower( $propertyId );
+		if( !isset( $this->entities[$propertyId] ) || !isset( $this->entities[$propertyId]['datatype'] ) ) {
+			return null;
+		}
+		return $this->entities[$propertyId]['datatype'];
+	}
+
+	/**
+	 * @return BasePedia
+	 */
+	public static function singleton() {
+		static $self;
+		if( $self === null ) {
+			$self = new BasePedia();
+		}
+		return $self;
 	}
 }

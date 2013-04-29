@@ -54,7 +54,7 @@ abstract class EntityResource {
 	 * Add to the graph the entity
 	 * @param boolean $withDocument include the description of the page
 	 */
-	public function updateGraph( $withDocument = true ) {
+	public function updateGraph( $withDocument ) {
 		if( $withDocument ) {
 			$page = $this->graph->resource( BasePedia::getDocumentUri( $this->data['id'] ), 'foaf:Document' );
 			$page->addType( array( 'cc:Work' ) );

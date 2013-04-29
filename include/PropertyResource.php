@@ -29,17 +29,28 @@ class PropertyResource extends EntityResource {
 	 * @see EntityResource::updateGraph
 	 */
 	public function updateGraph( $withDocument = true ) {
-		parent::updateGraph( true );
+		parent::updateGraph( $withDocument );
+
 		$this->resource->setType( 'wb:Property' );
 
-		switch( $this->data['datatype'] ) {
+		$range = $this->getRange( $this->data['datatype'] );
+		if( $range !== null ) {
+			$this->resource->add( 'rdfs:range', $range );
+		}
+	}
+
+	/**
+	 * @param string $datatype the datatype id
+	 * @return EasyRdf_Resource|null the range of the property
+	 */
+	protected function getRange( $datatype ) {
+		switch( $datatype ) {
 			case 'wikibase-item':
-				$this->resource->add( 'rdfs:range', $this->graph->resource( 'wb:Item' ) );
-				break;
+				return $this->graph->resource( 'wb:Item' );
 			case 'commonsMedia':
+				return $this->graph->resource( 'foaf:Image' );
 			case 'string':
-				$this->resource->add( 'rdfs:range', $this->graph->resource( 'rdfs:Literal' ) );
-				break;
+				return $this->graph->resource( 'rdfs:Literal' );
 		}
 	}
 
