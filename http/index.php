@@ -5,7 +5,6 @@ $ids = isset( $_GET['ids'] ) ? explode( '|', rawurldecode( $_GET['ids'] ) ) : ar
 $sites = isset( $_GET['sites'] ) ? explode( '|', rawurldecode( $_GET['sites'] ) ) : array();
 $titles = isset( $_GET['titles'] ) ? explode( '|', rawurldecode( $_GET['titles'] ) ) : array();
 $languages = isset( $_GET['languages'] ) ? explode( '|', rawurldecode( $_GET['languages'] ) ) : array();
-$wgBasePediaRepo = isset( $_GET['repo'] ) ? $_GET['repo'] : 'www.wikidata.org';
 
 $formatId = 'text/html';
 if( isset( $_GET['format'] ) && $_GET['format'] !== '' ) {
@@ -18,12 +17,6 @@ if( isset( $_GET['format'] ) && $_GET['format'] !== '' ) {
 		}
 	}
 	$formatId = http_negotiate_content_type( $acceptedFormats, $_SERVER['HTTP_ACCEPT'] );
-}
-
-if( !in_array( $wgBasePediaRepo, array( 'wikidata.org', 'www.wikidata.org', 'wikidata-test-repo.wikimedia.de' ) ) ) {
-	header( 'HTTP/1.1 404 Not Found' );
-	echo 'The parameter repo is not valid.';
-	exit();
 }
 
 $basePedia = new BasePedia();

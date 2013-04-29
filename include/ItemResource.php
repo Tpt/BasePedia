@@ -31,6 +31,7 @@ class ItemResource extends EntityResource {
 	public function updateGraph( $withDocument = true ) {
 		parent::updateGraph( true );
 		$this->resource->setType( 'wb:Item' );
+		$this->resource->add( 'owl:sameAs', $this->graph->resource( BasePedia::getEntityUriInRepo( $this->data['id'] ) ) );
 
 		foreach( $this->data['sitelinks'] as $link ) {
 			$title = str_replace( ' ', '_', $link['title'] );

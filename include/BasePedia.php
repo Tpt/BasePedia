@@ -27,6 +27,8 @@ class BasePedia {
 	protected $http;
 	protected $entities = array();
 	const LICENCE_URI = 'http://creativecommons.org/publicdomain/zero/1.0/';
+	const BASE_URI = 'http://basepedia.wmflabs.org';
+	const BASE_REPO_URI = 'http://www.wikidata.org';
 
 	public function __construct() {
 		$this->http = new Http( 'BasePedia/0.1 by User:Tpt' );
@@ -64,8 +66,8 @@ class BasePedia {
 	 * @return EasyRdf_Graph
 	 */
 	protected function createBaseGraph() {
-		EasyRdf_Namespace::set( 'wd', 'http://' . self::getRepoHost() . '/id/' );
-		EasyRdf_Namespace::set( 'wb', 'http://basepedia.wmflabs.org/ontology#' );
+		EasyRdf_Namespace::set( 'wd', self::BASE_URI . '/id/' );
+		EasyRdf_Namespace::set( 'wb', self::BASE_URI . '/ontology#' );
 		return new EasyRdf_Graph();
 	}
 
@@ -122,7 +124,7 @@ class BasePedia {
 	 * @throws Exception
 	 */
 	protected function get( array $params ) {
-		$url = 'http://' . self::getRepoHost() . '/w/api.php?' . http_build_query( $params + array( 'format' => 'php' ) );
+		$url = self::BASE_REPO_URI . '/w/api.php?' . http_build_query( $params + array( 'format' => 'php' ) );
 		$response = $this->http->get( $url );
 		return unserialize( $response );
 	}
@@ -145,26 +147,22 @@ class BasePedia {
 	 * @param string $id The id of the entity like "q23"
 	 */
 	public static function getDocumentUri( $id ) {
-		return 'http://' . self::getRepoHost() . '/wiki/' . strtoupper( $id );
+		return self::BASE_REPO_URI . '/wiki/' . strtoupper( $id );
 	}
 
 	/**
-	 * Returns URI of a Wikidata entity
+	 * Returns URI of a Wikibase entity
 	 * @param string $id The id of the entity like "q23"
 	 */
 	public static function getEntityUri( $id ) {
-		return 'http://' . self::getRepoHost() . '/id/' . strtolower( $id );
+		return self::BASE_URI . '/id/' . strtolower( $id );
 	}
 
 	/**
-	 * Returns host of the used repository
-	 * @return string like "wikidata.org"
+	 * Returns URI of a Wikibase entity in the repository
+	 * @param string $id The id of the entity like "q23"
 	 */
-	public static function getRepoHost() {
-		global $wgBasePediaRepo;
-		if( !isset( $wgBasePediaRepo ) ) {
-			$wgBasePediaRepo = 'wikidata.org';
-		}
-		return $wgBasePediaRepo;
+	public static function getEntityUriInRepo( $id ) {
+		return self::BASE_REPO_URI . '/id/' . strtolower( $id );
 	}
 }
