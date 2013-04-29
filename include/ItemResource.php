@@ -38,9 +38,9 @@ class ItemResource extends EntityResource {
 			if( preg_match( '/^(.*)wiki$/', $link['site'], $m ) ) {
 				$this->resource->add( 'foaf:isPrimaryTopicOf', $this->graph->resource( 'http://' . str_replace( '_', '-', $m[1] ) . '.wikipedia.org/wiki/' . $title ) );
 				if( $m[1] === 'en' ) {
-					$this->resource->add( 'owl:sameAs', $this->graph->resource( 'http://dbpedia.org/resource/' . $title ) );
+					$this->resource->add( 'owl:sameAs', $this->graph->resource( 'http://dbpedia.org/resource/' . $this->dbPediaEncode( $title ) ) );
 				} else if( in_array( $m[1], array( 'fr', 'it', 'ja', 'ko', 'cs', 'el', 'pl', 'ru', 'es', 'de', 'pt' ) ) ) {
-					$this->resource->add( 'owl:sameAs', $this->graph->resource( 'http://' . $m[1] . '.dbpedia.org/resource/' . $title ) );
+					$this->resource->add( 'owl:sameAs', $this->graph->resource( 'http://' . $m[1] . '.dbpedia.org/resource/' . $this->dbPediaEncode( $title ) ) );
 				}
 			}
 		}
@@ -108,5 +108,16 @@ class ItemResource extends EntityResource {
 				$this->data[$field] = array();
 			}
 		}
+	}
+
+	/**
+	 * Encode a MW title as dbPedia does
+	 */
+	protected function dbPediaEncode( $title ) {
+		return str_replace(
+			array( ' ', '"', '#', '%', '<', '>', '?', '[', '\\', ']', '^', '`', '{', '|', '}' ),
+			array( '_', '%22', '%23', '%25', '%3C', '%3E', '%3F', '%5B', '%5C', '%5D', '%5E', '%60', '%7B', '%7C', '%7D' ),
+			$title
+		);
 	}
 }
