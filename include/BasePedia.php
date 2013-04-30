@@ -156,7 +156,11 @@ class BasePedia {
 	 * @param string $id The id of the entity like "q23"
 	 */
 	public static function getDocumentUri( $id ) {
-		return self::BASE_REPO_URI . '/wiki/' . strtoupper( $id );
+		$pageTitle = strtoupper( $id );
+		if( $pageTitle[0] === 'P' ) {
+			$pageTitle = 'Property:' . $pageTitle;
+		}
+		return self::BASE_REPO_URI . '/wiki/' . $pageTitle;
 	}
 
 	/**
