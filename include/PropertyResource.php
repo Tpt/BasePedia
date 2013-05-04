@@ -29,6 +29,8 @@ class PropertyResource extends EntityResource {
 	 * @see EntityResource::updateGraph
 	 */
 	public function updateGraph( $withDocument = true ) {
+		global $wgBasePediaMappingProperties;
+
 		parent::updateGraph( $withDocument );
 
 		$this->resource->setType( 'wb:Property' );
@@ -36,6 +38,10 @@ class PropertyResource extends EntityResource {
 		$range = $this->getRange( $this->data['datatype'] );
 		if( $range !== null ) {
 			$this->resource->add( 'rdfs:range', $range );
+		}
+
+		if( isset( $wgBasePediaMappingProperties[$this->data['id']] ) ) {
+			$this->resource->add( 'rdfs:subPropertyOf', $this->graph->resource( $wgBasePediaMappingProperties[$this->data['id']] ) );
 		}
 	}
 
